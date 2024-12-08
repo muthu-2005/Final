@@ -4,6 +4,8 @@ from firebase_admin import credentials, auth, db
 import secrets
 import bcrypt  # Import bcrypt for password hashing
 from datetime import datetime
+import os
+import json
 # Initialize the Flask app
 app = Flask(__name__)
 
