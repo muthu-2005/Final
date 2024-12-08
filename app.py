@@ -1,11 +1,12 @@
+import os
+import json
+import secrets
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 import firebase_admin
 from firebase_admin import credentials, auth, db
-import secrets
-import bcrypt  # Import bcrypt for password hashing
+import bcrypt
 from datetime import datetime
-import os
-import json
+
 # Initialize the Flask app
 app = Flask(__name__)
 
@@ -16,11 +17,19 @@ app.secret_key = secrets.token_hex(16)  # Generates a 32-character hex string
 firebase_credentials = os.getenv('FIREBASE_CREDENTIALS')
 
 if firebase_credentials:
-    # Load the Firebase credentials from the environment variable
-    cred = credentials.Certificate(json.loads(firebase_credentials))
-    firebase_admin.initialize_app(cred, {
-        'databaseURL': 'https://dopeshield-fa348-default-rtdb.firebaseio.com/'  # Your Firebase Realtime Database URL
-    })
+    try:
+        # Load the Firebase credentials from the environment variable
+        cred = credentials.Certificate(json.loads(firebase_credentials))
+        firebase_admin.initialize_app(cred, {
+            'databaseURL': 'https://dopeshield-fa348-default-rtdb.firebaseio.com/'  # Your Firebase Realtime Database URL
+        })
+        print("Firebase initialized successfully.")
+    except json.JSONDecodeError as e:
+        print(f"Error parsing Firebase credentials: {e}")
+        raise
+    except Exception as e:
+        print(f"Error initializing Firebase: {e}")
+        raise
 else:
     raise ValueError("Firebase credentials not found in environment variables!")
 
